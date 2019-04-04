@@ -37,6 +37,11 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    /* Workaround for known toolchain issue, see:
+     * https://issuetracker.google.com/issues/125696148 */
+    packagingOptions {
+        exclude 'META-INF/atomicfu.kotlin_module'
+    }
 
     // Enables data binding.
     dataBinding {
