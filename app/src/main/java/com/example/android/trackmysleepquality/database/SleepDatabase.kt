@@ -81,7 +81,7 @@ abstract class SleepDatabase : RoomDatabase() {
                 // Smart cast is only available to local variables.
                 var instance = INSTANCE
                 // If instance is `null` make a new database instance.
-                if (instance == null) {
+                if (null == instance) {
                     instance = Room.databaseBuilder(
                             context.applicationContext,
                             SleepDatabase::class.java,
