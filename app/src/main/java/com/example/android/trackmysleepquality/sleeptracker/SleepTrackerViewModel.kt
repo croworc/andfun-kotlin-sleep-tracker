@@ -104,9 +104,41 @@ class SleepTrackerViewModel(
         }
     }
 
-    //TODO (08) Create onStopTracking() for the Stop button with an update() suspend function.
+    // COMPLETED (08) Create onStopTracking() for the Stop button with an update() suspend function.
+    fun onStopTracking() {
+        uiScope.launch {
+            // tonight is null if either:
+            //    a) we've just started the app for the first time, or
+            //    b) there's currently no sleep record in the db, or
+            //    c) the latest/only sleep record is not 'open', i.e. the end time is different from
+            //       the start time.
+            val oldNight = tonight.value ?: return@launch
+            oldNight.endTimeMilli = System.currentTimeMillis()
+            update(oldNight)
+        }
+    }
 
-    //TODO (09) For the Clear button, created onClear() with a clear() suspend function.
+    private suspend fun update(night: SleepNight) {
+        // Again, we're running the db update operation in a coroutine that runs in a different
+        // scope from the UI scope.
+        withContext(Dispatchers.IO) {
+            database.update(night)
+        }
+    }
+
+    //COMPLETEDk (09) For the Clear button, created onClear() with a clear() suspend function.
+    fun onClear() {
+        uiScope.launch {
+            clear()
+            tonight.value = null
+        }
+    }
+
+    private suspend fun clear() {
+        withContext(Dispatchers.IO) {
+            database.clear()
+        }
+    }
 
     //TODO (12) Transform nights into a nightsString using formatNights().
 
