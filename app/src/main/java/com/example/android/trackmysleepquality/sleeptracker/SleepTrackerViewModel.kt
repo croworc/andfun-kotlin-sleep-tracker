@@ -33,7 +33,10 @@ class SleepTrackerViewModel(
     //COMPLETED (01) Declare Job() and cancel jobs in onCleared().
     private var viewModelJob = Job()
 
-    //TODO (02) Define uiScope for coroutines.
+    override fun onCleared() {
+        super.onCleared()
+        viewModelJob.cancel() // cancels all coroutines
+    }
 
     //TODO (03) Create a MutableLiveData variable tonight for one SleepNight.
 
