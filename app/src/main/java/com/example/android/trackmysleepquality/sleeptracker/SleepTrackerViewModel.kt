@@ -18,7 +18,10 @@ package com.example.android.trackmysleepquality.sleeptracker
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.MutableLiveData
 import com.example.android.trackmysleepquality.database.SleepDatabaseDao
+import com.example.android.trackmysleepquality.database.SleepNight
+import kotlinx.coroutines.*
 
 /**
  * ViewModel for SleepTrackerFragment.
@@ -27,7 +30,8 @@ class SleepTrackerViewModel(
         val database: SleepDatabaseDao,
         application: Application) : AndroidViewModel(application) {
 
-    //TODO (01) Declare Job() and cancel jobs in onCleared().
+    //COMPLETED (01) Declare Job() and cancel jobs in onCleared().
+    private var viewModelJob = Job()
 
     //TODO (02) Define uiScope for coroutines.
 
@@ -36,7 +40,11 @@ class SleepTrackerViewModel(
     //TODO (04) Define a variable, nights. Then getAllNights() from the database
     //and assign to the nights variable.
 
-    //TODO (05) In an init block, initializeTonight(), and implement it to launch a coroutine
+    // COMPLETED (04) Define a variable, nights. Then getAllNights() from the database
+    // and assign to the nights variable. Its a LiveData<List<SleepNight>>.
+    private val allNights = database.getAllNights()
+
+    // COMPLETED (05) In an init block, initializeTonight(), and implement it to launch a coroutine
     //to getTonightFromDatabase().
 
     //TODO (06) Implement getTonightFromDatabase()as a suspend function.
