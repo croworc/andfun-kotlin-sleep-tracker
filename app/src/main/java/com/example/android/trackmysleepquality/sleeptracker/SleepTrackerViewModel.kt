@@ -38,10 +38,14 @@ class SleepTrackerViewModel(
         viewModelJob.cancel() // cancels all coroutines
     }
 
-    //TODO (03) Create a MutableLiveData variable tonight for one SleepNight.
+    // COMPLETED (02) Define uiScope for coroutines. The scope determines which thread the coroutine
+    // will run in, and it also needs to know about the job.
+    // The coroutines launched in the UI scope will  run on the UI thread.
+    // This is sensible for the view model, as the coroutines will eventually update the UI.
+    private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
 
-    //TODO (04) Define a variable, nights. Then getAllNights() from the database
-    //and assign to the nights variable.
+    // COMPLETED (03) Create a MutableLiveData variable 'tonight' for one SleepNight.
+    private var tonight = MutableLiveData<SleepNight?>()
 
     // COMPLETED (04) Define a variable, nights. Then getAllNights() from the database
     // and assign to the nights variable. Its a LiveData<List<SleepNight>>.
@@ -49,6 +53,16 @@ class SleepTrackerViewModel(
 
     // COMPLETED (05) In an init block, initializeTonight(), and implement it to launch a coroutine
     //to getTonightFromDatabase().
+    init {
+        initializeTonight()
+    }
+
+    private fun initializeTonight() {
+        // Launch a coroutine in the current scope without blocking the current thread
+        uiScope.launch {
+            tonight.value = getTonightFromDatabase()
+        }
+    }
 
     //TODO (06) Implement getTonightFromDatabase()as a suspend function.
 
