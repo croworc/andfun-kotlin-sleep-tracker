@@ -64,7 +64,21 @@ class SleepTrackerViewModel(
         }
     }
 
-    //TODO (06) Implement getTonightFromDatabase()as a suspend function.
+    // COMPLETED (06) Implement getTonightFromDatabase()as a suspend function.
+    // This method will be called from inside the coroutine that runs in the UI scope
+    // and must not block.
+    // We want to return a SleepNight, or null.
+    private suspend fun getTonightFromDatabase(): SleepNight? {
+        return withContext(Dispatchers.IO) {
+            var night = database.getTonight() // this returns the latest night saved in the db
+            // Is this latest sleep recording already completed (start- and end time differ)?
+            // Then it's not a started recording (for 'tonight') and we will return 'null'.
+            if (night?.endTimeMilli != night?.startTimeMilli) {
+                night = null
+            }
+            night
+        }
+    }
 
     //TODO (07) Implement the click handler for the Start button, onStartTracking(), using
     //coroutines. Define the suspend function insert(), to insert a new night into the database.
