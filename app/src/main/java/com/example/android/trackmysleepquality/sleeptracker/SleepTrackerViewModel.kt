@@ -19,8 +19,10 @@ package com.example.android.trackmysleepquality.sleeptracker
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations
 import com.example.android.trackmysleepquality.database.SleepDatabaseDao
 import com.example.android.trackmysleepquality.database.SleepNight
+import com.example.android.trackmysleepquality.formatNights
 import kotlinx.coroutines.*
 
 /**
@@ -33,10 +35,6 @@ class SleepTrackerViewModel(
     //COMPLETED (01) Declare Job() and cancel jobs in onCleared().
     private var viewModelJob = Job()
 
-    override fun onCleared() {
-        super.onCleared()
-        viewModelJob.cancel() // cancels all coroutines
-    }
 
     // COMPLETED (02) Define uiScope for coroutines. The scope determines which thread the coroutine
     // will run in, and it also needs to know about the job.
@@ -49,7 +47,12 @@ class SleepTrackerViewModel(
 
     // COMPLETED (04) Define a variable, nights. Then getAllNights() from the database
     // and assign to the nights variable. Its a LiveData<List<SleepNight>>.
-    private val allNights = database.getAllNights()
+    private val nights = database.getAllNights()
+
+    // COMPLETED (12) Transform nights into a nightsString using formatNights().
+    val nightsString = Transformations.map(nights) { nights ->
+        formatNights(nights, application.resources)
+    }
 
     // COMPLETED (05) In an init block, initializeTonight(), and implement it to launch a coroutine
     //to getTonightFromDatabase().
@@ -107,7 +110,7 @@ class SleepTrackerViewModel(
     // COMPLETED (08) Create onStopTracking() for the Stop button with an update() suspend function.
     fun onStopTracking() {
         uiScope.launch {
-            // tonight is null if either:
+            // 'tonight' is null if either:
             //    a) we've just started the app for the first time, or
             //    b) there's currently no sleep record in the db, or
             //    c) the latest/only sleep record is not 'open', i.e. the end time is different from
@@ -140,8 +143,10 @@ class SleepTrackerViewModel(
         }
     }
 
-    //TODO (12) Transform nights into a nightsString using formatNights().
+    override fun onCleared() {
+        super.onCleared()
+        viewModelJob.cancel() // cancels all coroutines
+    }
 
-
-}
+} // close class SleepTrackerViewModel
 
