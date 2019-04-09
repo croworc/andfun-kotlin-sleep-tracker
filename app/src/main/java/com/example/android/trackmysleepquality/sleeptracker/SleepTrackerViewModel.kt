@@ -80,8 +80,29 @@ class SleepTrackerViewModel(
         }
     }
 
-    //TODO (07) Implement the click handler for the Start button, onStartTracking(), using
-    //coroutines. Define the suspend function insert(), to insert a new night into the database.
+    // COMPLETED (07) Implement the click handler for the Start button, onStartTracking(), using
+    // coroutines. Define the suspend function insert(), to insert a new night into the database.
+    fun onStartTracking() {
+        // We do this in the UI scope, as we finally need to update the UI w/ the new data.
+        uiScope.launch {
+            // Create a new sleep recording object for this night; it captures the current time as
+            // the start time.
+            val newNight = SleepNight()
+            // Insert it into the db
+            insert(newNight)
+            // Retrieve that new sleep recording object that we've just inserted back from the db,
+            // because SQLite has provided the ID on its own.
+            tonight.value = getTonightFromDatabase()
+        }
+    }
+
+    private suspend fun insert(night: SleepNight) {
+        // Again, the long running work (here: inserting into the db) has nothing to do w/ the UI,
+        // so we switch the context to the IO scope, that is optimized for these kind of operations.
+        withContext(Dispatchers.IO) {
+            database.insert(night) // calling the DAO function insert()
+        }
+    }
 
     //TODO (08) Create onStopTracking() for the Stop button with an update() suspend function.
 
