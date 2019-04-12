@@ -16,7 +16,62 @@
 
 package com.example.android.trackmysleepquality.sleepquality
 
-//TODO (03) Using the code in SleepTrackerViewModel for reference, create SleepQualityViewModel
-//with coroutine setup and navigation setup.
+import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import com.example.android.trackmysleepquality.database.SleepDatabaseDao
+import kotlinx.coroutines.*
 
-//TODO (04) implement the onSetSleepQuality() click handler using coroutines.
+const val LOG_TAG = "SleepQualityViewModel"
+
+// COMPLETED (03) Using the code in SleepTrackerViewModel for reference, create SleepQualityViewModel
+// with coroutine setup and navigation setup.
+class SleepQualityViewModel(
+        private val sleepNightKey: Long = 0L,
+        val database: SleepDatabaseDao) : ViewModel() {
+
+    private val viewModelJob = Job()
+
+    private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
+
+    /** Encapsulated event variable for the 'should-navigate-back-to-sleep-tracker-fragment' event */
+    private val _navigateToSleepTracker = MutableLiveData<Boolean>(false)
+
+    val navigateToSleepTracker: LiveData<Boolean>
+        get() = _navigateToSleepTracker
+
+    fun doneNavigating() {
+        _navigateToSleepTracker.value = false
+    }
+
+    // COMPLETED (04) implement the onSetSleepQuality() click handler using coroutines.
+    /**
+     * OnClickHandler for the sleep quality ImageViews
+     */
+    fun onSetSleepQuality(quality: Int) {
+        uiScope.launch {
+            // run the db operations in another scope: the IO-scope
+            withContext(Dispatchers.IO) {
+                // Get the SleepNight for the ID that has been passed as fragment args from the db.
+                val tonight = database.get(sleepNightKey) ?: return@withContext
+                // Set its sleep quality property ...
+                tonight.sleepQuality = quality
+                // ...and update the corresponding sleep night record in the db.
+                database.update(tonight)
+            }
+            // We've initiated the db update, so we can now navigate back to the sleep tracker fragment
+            _navigateToSleepTracker.value = true
+        }
+    } // close fun onSetSleepQuality()
+
+    /**
+     * We'll cancel all still running coroutines when this ViewModel gets destroyed
+     */
+    override fun onCleared() {
+        super.onCleared()
+        viewModelJob.cancel()
+    }
+
+
+} // close class SleepQualityViewModel
