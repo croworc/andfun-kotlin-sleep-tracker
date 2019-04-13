@@ -86,7 +86,7 @@ class SleepTrackerViewModel(
     fun doneShowingSnackBar() {
         _showSnackBarEvent.value = false
     }
-    //TODO (06) In onClear(), set the value of _showOnSnackbarEvent to true.
+
 
     /**
      * Variable that tells the Fragment to navigate to a specific [SleepQualityFragment]
@@ -202,6 +202,9 @@ class SleepTrackerViewModel(
 
             // And clear tonight since it's no longer in the database
             tonight.value = null
+
+            // COMPLETED (06) In onClear(), set the value of _showOnSnackbarEvent to true.
+            _showSnackBarEvent.value = true
         }
     }
 
