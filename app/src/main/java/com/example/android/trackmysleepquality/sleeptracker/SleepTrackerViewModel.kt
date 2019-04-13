@@ -79,7 +79,7 @@ class SleepTrackerViewModel(
 
     // COMPLETED (04) Using the familiar pattern, create encapsulated showSnackBarEvent variable
     // and doneShowingSnackbar() fuction.
-    val _showSnackBarEvent = MutableLiveData<Boolean>(false)
+    private val _showSnackBarEvent = MutableLiveData<Boolean>(false)
     val showSnackBarEvent: LiveData<Boolean>
         get() = _showSnackBarEvent
 
