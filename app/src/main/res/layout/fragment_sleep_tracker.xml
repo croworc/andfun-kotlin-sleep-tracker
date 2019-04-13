@@ -66,7 +66,7 @@
              from the ViewModel. The click handler is in the ViewModel as well, and
              you can set it for the Views using this lambda pattern. -->
 
-        <!-- TODO (01) Add the enabled property to each button and give it
+        <!-- COMPLETED (01) Add the enabled property to each button and give it
              the value of a state variable. -->
 
         <Button
