@@ -75,11 +75,17 @@ class SleepTrackerViewModel(
         it.isNotEmpty() // nights is a list of all the sleep recordings in the db
     }
 
-    //TODO (03) Verify app build and runs without errors.
+    // COMPLETED (03) Verify app build and runs without errors.
 
-    //TODO (04) Using the familiar pattern, create encapsulated showSnackBarEvent variable
-    //and doneShowingSnackbar() fuction.
+    // COMPLETED (04) Using the familiar pattern, create encapsulated showSnackBarEvent variable
+    // and doneShowingSnackbar() fuction.
+    val _showSnackBarEvent = MutableLiveData<Boolean>(false)
+    val showSnackBarEvent: LiveData<Boolean>
+        get() = _showSnackBarEvent
 
+    fun doneShowingSnackBar() {
+        _showSnackBarEvent.value = false
+    }
     //TODO (06) In onClear(), set the value of _showOnSnackbarEvent to true.
 
     /**
