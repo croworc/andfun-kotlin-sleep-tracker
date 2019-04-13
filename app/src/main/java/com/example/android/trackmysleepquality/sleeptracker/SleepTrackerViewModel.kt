@@ -61,8 +61,19 @@ class SleepTrackerViewModel(
         formatNights(nights, application.resources)
     }
 
-    //TODO (02)  Create three corresponding state variables. Assign them a Transformations
-    //that tests it against the value of tonight.
+    // COMPLETED (02)  Create three corresponding state variables. Assign them a Transformations
+    // that tests it against the value of tonight.
+    val startButtonVisible = Transformations.map(tonight ) {
+        null == it // tonight is null if we don't have a tracking open
+    }
+
+    val stopButtonVisible = Transformations.map(tonight ) {
+        null != it // tonight is not-null if we are currently tracking a night's sleep
+    }
+
+    val clearButtonVisible = Transformations.map(nights) {
+        it.isNotEmpty() // nights is a list of all the sleep recordings in the db
+    }
 
     //TODO (03) Verify app build and runs without errors.
 
