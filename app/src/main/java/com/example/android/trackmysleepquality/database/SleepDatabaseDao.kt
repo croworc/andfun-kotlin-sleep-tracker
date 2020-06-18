@@ -29,7 +29,7 @@ import androidx.room.Update
 interface SleepDatabaseDao {
 
     @Insert
-    fun insert(night: SleepNight)
+    fun insert(night: SleepNight): Long
 
     /**
      * When updating a row with a value already set in a column,
