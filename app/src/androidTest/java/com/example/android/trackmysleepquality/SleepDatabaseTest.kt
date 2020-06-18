@@ -16,6 +16,7 @@
 
 package com.example.android.trackmysleepquality
 
+import android.util.Log
 import androidx.room.Room
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
@@ -41,6 +42,7 @@ class SleepDatabaseTest {
     private lateinit var sleepDao: SleepDatabaseDao
     private lateinit var db: SleepDatabase
 
+    // region test setup
     @Before
     fun createDb() {
         val context = InstrumentationRegistry.getInstrumentation().targetContext
@@ -52,13 +54,17 @@ class SleepDatabaseTest {
                 .build()
         sleepDao = db.sleepDatabaseDao
     }
+    // endregion test setup
 
+    // region test teardown
     @After
     @Throws(IOException::class)
     fun closeDb() {
         db.close()
     }
+    // endregion test teardown
 
+    //region test impl
     @Test
     @Throws(Exception::class)
     fun insertAndGetNight() {
@@ -67,5 +73,29 @@ class SleepDatabaseTest {
         val tonight = sleepDao.getTonight()
         assertEquals(tonight?.sleepQuality, -1)
     }
+
+    @Test
+    @Throws(Exception::class)
+    fun insertAndUpdate() {
+        // Create a sleep record w/ default value for the sleep quality, which is -1
+        // and insert it into the table
+        val night = SleepNight()
+        val nightId = sleepDao.insert(night)
+        Log.d("update test", "Night Id: $nightId")
+
+        // Update the SleepNight object's sleep quality from -1 to 5 and
+        // also update this sleep record in the db
+        night.nightId = nightId
+        night.sleepQuality = 5
+        sleepDao.update(night)
+
+        // Retrieve the updated row from the table and test whether the sleep quality value
+        // has actually been updated
+        val nightToTest = sleepDao.get(nightId)
+        assertEquals(5, nightToTest?.sleepQuality)
+    }
+
+
+    //endregion
 }
 
