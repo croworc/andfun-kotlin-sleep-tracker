@@ -41,9 +41,9 @@ interface SleepDatabaseDao {
     fun update(night: SleepNight)
 
     /**
-     * Selects and returns the row that matches the supplied start time, which is our key.
+     * Selects and returns the row that matches the supplied night ID, which is our key.
      *
-     * @param key startTimeMilli to match
+     * @param key night ID to match
      */
     @Query("SELECT * from daily_sleep_quality_table WHERE nightId = :key")
     fun get(key: Long): SleepNight?
