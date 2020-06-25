@@ -88,13 +88,13 @@ class SleepTrackerViewModel(
     fun onStartTracking() {
         // We do this in the UI scope, as we finally need to update the UI w/ the new data.
         uiScope.launch {
-            // Create a new sleep recording object for this night; it captures the current time as
-            // the start time.
+            // Create a new sleep recording object (SleepNight) for this night; it captures the current
+            // time as both, the start- and the stop time.
             val newNight = SleepNight()
-            // Insert it into the db
+            // Insert this SleepNight object into the db
             insert(newNight)
             // Retrieve that new sleep recording object that we've just inserted back from the db,
-            // because SQLite has provided the ID on its own.
+            // because SQLite has generated its ID upon inserting the object into the db.
             tonight.value = getTonightFromDatabase()
         }
     }
