@@ -23,7 +23,7 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.android.trackmysleepquality.R
 import com.example.android.trackmysleepquality.database.SleepDatabase
@@ -56,18 +56,18 @@ class SleepTrackerFragment : Fragment() {
         val viewModelFactory = SleepTrackerViewModelFactory(dataSource, application)
 
         val sleepTrackerViewModel =
-                ViewModelProviders.of(
+                ViewModelProvider(
                         this, viewModelFactory).get(SleepTrackerViewModel::class.java)
 
         binding.sleepTrackerViewModel = sleepTrackerViewModel
 
-        binding.setLifecycleOwner(this)
+        binding.lifecycleOwner = this
 
         // COMPLETED (05) Add an observer that shows a Snackbar.
-        sleepTrackerViewModel.showSnackBarEvent.observe(this, Observer { shouldShowSnackbar ->
+        sleepTrackerViewModel.showSnackBarEvent.observe(viewLifecycleOwner, Observer { shouldShowSnackbar ->
             if (shouldShowSnackbar) {
                 Snackbar.make(
-                        activity!!.findViewById(android.R.id.content),
+                        requireActivity().findViewById(android.R.id.content),
                         getString(R.string.cleared_message),
                         Snackbar.LENGTH_SHORT
                 ).show()
@@ -76,7 +76,7 @@ class SleepTrackerFragment : Fragment() {
         })
 
         // Add an Observer on the state variable for Navigating when STOP button is pressed.
-        sleepTrackerViewModel.navigateToSleepQuality.observe(this, Observer { night ->
+        sleepTrackerViewModel.navigateToSleepQuality.observe(viewLifecycleOwner, Observer { night ->
             night?.let {
                 // We need to get the navController from this, because button is not ready, and it
                 // just has to be a view. For some reason, this only matters if we hit stop again
